@@ -67,8 +67,8 @@ const props = defineProps({
   registerUrl: { type: String, required: true },
   logoutUrl: { type: String, required: true },
   isAuthenticated: { type: Boolean, required: true },
-  // tasksListUrl: { type: String, required: true },
-  // tasksFormUrl: { type: String, required: true },
+  tasksListUrl: { type: String, required: true },
+  tasksFormUrl: { type: String, required: true },
 });
 const showMobileMenu = false;
 

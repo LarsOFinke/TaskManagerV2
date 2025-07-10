@@ -16,11 +16,10 @@
 				registerUrl     : path('app_register'),
 				logoutUrl       : path('app_logout'),
 				isAuthenticated: app.user is not null,
-				
+				tasksListUrl 	: path('app_task_list'),
+				tasksFormUrl	: path('app_task_form'),
 			} 
 		%}
-		{# tasksListUrl 	: path('app_tasks_list'),
-						tasksFormUrl	: path('app_tasks_form'), #}
 
 		<div
 			class="flex flex-col min-h-screen bg-gray-200 dark:bg-gray-900">

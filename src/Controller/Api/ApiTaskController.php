@@ -11,19 +11,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api/task', name: 'app_api_task_')]
+#[Route('/api/task', name: 'api_task_')]
 final class ApiTaskController extends AbstractController
 {
     #[Route('/get-all', name: 'get_all', methods: ['GET'])]
-    public function index(TaskRepository $taskRepository): Response
+    public function getAll(TaskRepository $taskRepository): Response
     {
         return $this->render('api_task/index.html.twig', [
             'tasks' => $taskRepository->findAll(),
         ]);
     }
 
-    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
         $task = new Task();
         $form = $this->createForm(TaskType::class, $task);
@@ -43,7 +43,7 @@ final class ApiTaskController extends AbstractController
     }
 
     #[Route('/get/{id}', name: 'get_by_id', methods: ['GET'])]
-    public function show(Task $task): Response
+    public function getById(Task $task): Response
     {
         return $this->render('api_task/show.html.twig', [
             'task' => $task,

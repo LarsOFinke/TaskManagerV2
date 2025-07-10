@@ -11,19 +11,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api/topic', name: 'app_api_topic_')]
+#[Route('/api/topic', name: 'api_topic_')]
 final class ApiTopicController extends AbstractController
 {
     #[Route('/get-all', name: 'get_all', methods: ['GET'])]
-    public function index(TopicRepository $topicRepository): Response
+    public function getAll(TopicRepository $topicRepository): Response
     {
         return $this->render('api_topic/index.html.twig', [
             'topics' => $topicRepository->findAll(),
         ]);
     }
 
-    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
         $topic = new Topic();
         $form = $this->createForm(Topic1Type::class, $topic);
@@ -43,7 +43,7 @@ final class ApiTopicController extends AbstractController
     }
 
     #[Route('/get/{id}', name: 'get_by_id', methods: ['GET'])]
-    public function show(Topic $topic): Response
+    public function getById(Topic $topic): Response
     {
         return $this->render('api_topic/show.html.twig', [
             'topic' => $topic,

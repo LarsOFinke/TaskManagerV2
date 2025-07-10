@@ -8,11 +8,10 @@
 	{% set props = 
 			{
 				header			: header,
-				
+				taskFormUrl     : path('app_task_form'),
 				taskList		: taskList,
 			} 
 		%}
-	{# taskFormUrl     : path('app_tasks_form'), #}
 
 	<div data-vue-component="TaskList" data-props='{{ props |json_encode|raw }}'></div>
 {% endblock %}

@@ -11,19 +11,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api/todo', name: 'app_api_todo_')]
+#[Route('/api/todo', name: 'api_todo_')]
 final class ApiTodoController extends AbstractController
 {
     #[Route('/get-all', name: 'get_all', methods: ['GET'])]
-    public function index(TodoRepository $todoRepository): Response
+    public function getAll(TodoRepository $todoRepository): Response
     {
         return $this->render('api_todo/index.html.twig', [
             'todos' => $todoRepository->findAll(),
         ]);
     }
 
-    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
         $todo = new Todo();
         $form = $this->createForm(TodoType::class, $todo);
@@ -43,7 +43,7 @@ final class ApiTodoController extends AbstractController
     }
 
     #[Route('/get/{id}', name: 'get_by_id', methods: ['GET'])]
-    public function show(Todo $todo): Response
+    public function getById(Todo $todo): Response
     {
         return $this->render('api_todo/show.html.twig', [
             'todo' => $todo,
