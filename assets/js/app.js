@@ -5,15 +5,15 @@ import FooterItem from "@/components/shared/Footer-Item.vue";
 import MessageBox from "@/components/shared/Message-Box.vue";
 import LoginForm from "@/components/home/Login-Form.vue";
 import RegistrationForm from "@/components/home/Registration-Form.vue";
-// import TaskList from "@/components/tasks/Task-List.vue";
-// import TaskForm from "@/components/tasks/Task-Form.vue";
+import TaskList from "@/components/tasks/Task-List.vue";
+import TaskForm from "@/components/tasks/Task-Form.vue";
 // import TaskEdit from "@/components/tasks/Task-Item-Edit.vue";
 
 const components = {
     LoginForm,
     RegistrationForm,
-    // TaskList,
-    // TaskForm,
+    TaskList,
+    TaskForm,
     // TaskEdit,
     MessageBox,
     NavbarItem,

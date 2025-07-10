@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Task
+{% endblock %}
+
+{% block body %}
+	{# Pass both the API endpoint and the CSRF token into Vue #}
+	{% set props = {
+        submitUrl   : path('api_task_create'),
+        taskListUrl : path('app_task_list'),
+        csrfToken   : csrf_token('create'),
+    } %}
+	<div data-vue-component="TaskForm" data-props='{{ props|json_encode|raw }}' class="w-full"></div>
+{% endblock %}

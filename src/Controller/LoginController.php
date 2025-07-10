@@ -12,10 +12,13 @@ class LoginController extends AbstractController
     #[Route(path: '/', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
+        /** @var \App\Entity\User|null $user */
+        $user   = $this->getUser();
+        if ($user !== null) {   // Already authenticated //
+            return $this->redirectToRoute('app_task_list');
+        }
 
-        // last username entered by the user
+        $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('login/login.html.twig', [

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\TaskMode;
 use App\Repository\TaskRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -37,6 +38,9 @@ class Task
 
     #[ORM\Column]
     private ?bool $isCompleted = null;
+
+    #[ORM\Column(enumType: TaskMode::class)]
+    private ?TaskMode $mode = null;
 
     public function __construct()
     {
@@ -134,6 +138,18 @@ class Task
     public function setIsCompleted(bool $isCompleted): static
     {
         $this->isCompleted = $isCompleted;
+
+        return $this;
+    }
+
+    public function getMode(): ?TaskMode
+    {
+        return $this->mode;
+    }
+
+    public function setMode(TaskMode $mode): static
+    {
+        $this->mode = $mode;
 
         return $this;
     }
