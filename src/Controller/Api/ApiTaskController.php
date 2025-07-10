@@ -33,7 +33,7 @@ final class ApiTaskController extends AbstractController
             $entityManager->persist($task);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_api_task_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('api_todo_get_all', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('api_task/new.html.twig', [
@@ -59,7 +59,7 @@ final class ApiTaskController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_api_task_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('api_todo_get_all', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('api_task/edit.html.twig', [
@@ -76,6 +76,6 @@ final class ApiTaskController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_api_task_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('api_todo_get_all', [], Response::HTTP_SEE_OTHER);
     }
 }

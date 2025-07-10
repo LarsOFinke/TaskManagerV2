@@ -3,7 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\Topic;
-use App\Form\Topic1Type;
+use App\Form\TopicType;
 use App\Repository\TopicRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,14 +26,14 @@ final class ApiTopicController extends AbstractController
     public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
         $topic = new Topic();
-        $form = $this->createForm(Topic1Type::class, $topic);
+        $form = $this->createForm(TopicType::class, $topic);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($topic);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_api_topic_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('api_topic_get_all', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('api_topic/new.html.twig', [
@@ -53,13 +53,13 @@ final class ApiTopicController extends AbstractController
     #[Route('/edit/{id}', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Topic $topic, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(Topic1Type::class, $topic);
+        $form = $this->createForm(TopicType::class, $topic);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_api_topic_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('api_topic_get_all', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('api_topic/edit.html.twig', [
@@ -76,6 +76,6 @@ final class ApiTopicController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_api_topic_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('api_topic_get_all', [], Response::HTTP_SEE_OTHER);
     }
 }

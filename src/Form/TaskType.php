@@ -17,7 +17,6 @@ class TaskType extends AbstractType
         $builder
             ->add('title')
             ->add('description')
-            ->add('isCompleted')
             ->add('mode')
             ->add('userRef', EntityType::class, [
                 'class' => User::class,

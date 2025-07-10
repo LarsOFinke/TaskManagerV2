@@ -25,8 +25,8 @@
                 <td>{{ task.isCompleted ? 'Yes' : 'No' }}</td>
                 <td>{{ task.mode }}</td>
                 <td>
-                    <a href="{{ path('app_api_task_show', {'id': task.id}) }}">show</a>
-                    <a href="{{ path('app_api_task_edit', {'id': task.id}) }}">edit</a>
+                    <a href="{{ path('api_task_get_by_id', {'id': task.id}) }}">show</a>
+                    <a href="{{ path('api_task_edit', {'id': task.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}
@@ -37,5 +37,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_api_task_new') }}">Create new</a>
+    <a href="{{ path('api_task_create') }}">Create new</a>
 {% endblock %}

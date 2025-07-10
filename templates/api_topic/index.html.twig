@@ -19,8 +19,8 @@
                 <td>{{ topic.id }}</td>
                 <td>{{ topic.name }}</td>
                 <td>
-                    <a href="{{ path('app_api_topic_show', {'id': topic.id}) }}">show</a>
-                    <a href="{{ path('app_api_topic_edit', {'id': topic.id}) }}">edit</a>
+                    <a href="{{ path('api_topic_get_by_id', {'id': topic.id}) }}">show</a>
+                    <a href="{{ path('api_topic_edit', {'id': topic.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}
@@ -31,5 +31,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_api_topic_new') }}">Create new</a>
+    <a href="{{ path('api_topic_create') }}">Create new</a>
 {% endblock %}

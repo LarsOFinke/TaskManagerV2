@@ -15,7 +15,6 @@ class TodoType extends AbstractType
     {
         $builder
             ->add('text')
-            ->add('isCompleted')
             ->add('TaskIDRef', EntityType::class, [
                 'class' => Task::class,
                 'choice_label' => 'id',

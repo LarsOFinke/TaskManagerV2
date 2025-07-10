@@ -33,7 +33,7 @@ final class ApiTodoController extends AbstractController
             $entityManager->persist($todo);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_api_todo_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('api_todo_get_all', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('api_todo/new.html.twig', [
@@ -59,7 +59,7 @@ final class ApiTodoController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_api_todo_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('api_todo_get_all', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('api_todo/edit.html.twig', [
@@ -76,6 +76,6 @@ final class ApiTodoController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_api_todo_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('api_todo_get_all', [], Response::HTTP_SEE_OTHER);
     }
 }
