@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!
+{% endblock %}
+
+{% block body %}
+	{# templates/security/login.html.twig #}
+	<form class="w-full" method="post" action="{{ path('app_login') }}">
+		<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+		{% set props = {
+    lastUsername: last_username,
+    error:        error ? error.messageKey|trans(error.messageData, 'security') : ''
+  } %}
+
+		<div data-vue-component="LoginForm" data-props='{{ props|json_encode|raw }}'></div>
+
+		<noscript>
+			<button type="submit">Login</button>
+		</noscript>
+	</form>
+
+{% endblock %}

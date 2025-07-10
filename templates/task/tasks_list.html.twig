@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{ header }}
+{% endblock %}
+
+{% block body %}
+	{% set props = 
+			{
+				header			: header,
+				
+				taskList		: taskList,
+			} 
+		%}
+	{# taskFormUrl     : path('app_tasks_form'), #}
+
+	<div data-vue-component="TaskList" data-props='{{ props |json_encode|raw }}'></div>
+{% endblock %}

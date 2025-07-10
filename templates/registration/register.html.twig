@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+{% block title %}Register
+{% endblock %}
+
+{% block body %}
+	<form
+		class="w-full" method="post" action="{{ path('app_register') }}">
+		{# CSRF token for the form #}
+		<input
+		type="hidden" name="registration_form[_token]" value="{{ csrf_token('registration') }}">
+
+		{# Set up props #}
+		{% set props = {} %}
+
+		{# Mount your Vue “island” here #}
+		<div data-vue-component="RegistrationForm" data-props='{{ { props }|json_encode|raw }}'></div>
+
+		<noscript>
+			<button type="submit">Register</button>
+		</noscript>
+	</form>
+{% endblock %}
