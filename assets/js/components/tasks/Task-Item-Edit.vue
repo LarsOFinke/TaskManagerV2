@@ -159,7 +159,7 @@ const props = defineProps({
 })
 const msg = ref('')
 const errorPhrase = ref('')
-const { loading, topicList, getUserTopics } = useTasksService()
+const { loading, topicList, getAllTopics } = useTasksService()
 const priority = ref(props.task.priority)
 const topic = ref(props.task.topic)
 const category = ref(props.task.category)
@@ -177,7 +177,7 @@ let nextId = props.task.todoList.length + 1
 onMounted(async () => {
     try {
         msg.value = 'Fetching topics...'
-        await getUserTopics()
+        await getAllTopics()
         msg.value = ''
     }
     catch {

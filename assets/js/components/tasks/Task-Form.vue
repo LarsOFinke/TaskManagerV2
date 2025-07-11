@@ -24,7 +24,7 @@
             <div class="flex mb-4 justify-between">
                 <!-- Topic -->
                 <label class="text-sm font-medium text-gray-100">Topic
-                    <select name="topic"
+                    <select name="topic" v-model.trim="topic"
                         class="ml-1 focus:outline-none focus:ring-2 focus:ring-indigo-500 border-gray-300 rounded-md shadow-sm"
                         required>
                         <option v-for="tpc in topicList" class="text-gray-100 bg-gray-700">{{ tpc.name }}</option>
@@ -68,7 +68,7 @@
             <!-- Deadline -->
             <div v-if="category === 'timed'" class="mb-4">
                 <label class="text-sm font-medium text-gray-100">Deadline
-                    <input name="deadlineDate" type="date"
+                    <input name="deadlineDate" v-model.trim="deadlineDate" type="date"
                         class="mt-1 w-fit px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                     <input name="deadlineTime" type="time"
                         class="mt-1 w-fit px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
@@ -90,7 +90,7 @@
             <!-- Start Date -->
             <div v-if="category === 'recurring'" class="mb-4">
                 <label class="text-sm font-medium text-gray-100">Start Date
-                    <input name="startDate" type="date"
+                    <input name="startDate" v-model.trim="startDate" type="date"
                         class="mt-1 w-fit px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 </label>
             </div>
@@ -98,7 +98,7 @@
             <!-- Title -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-100">Title
-                    <input name="title" type="text" required
+                    <input name="title" v-model.trim="title" type="text" required
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 </label>
             </div>
@@ -106,7 +106,7 @@
             <!-- Description -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-100">Description
-                    <textarea name="description" type="text" required
+                    <textarea name="description" v-model.trim="description" type="text" required
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 </label>
             </div>
@@ -161,7 +161,7 @@ const props = defineProps({
 })
 const msg = ref('')
 const errorPhrase = ref('')
-const { addNewTopic, topicList, getUserTopics, addNewTask } = useTasksService();
+const { addNewTopic, topicList, getAllTopics, addNewTask } = useTasksService();
 const priority = ref('')
 const topic = ref('')
 const newTopicName = ref('')
@@ -178,7 +178,7 @@ const id = ref(0)
 const viewNewTopic = ref(false)
 
 onMounted(() => {
-    getUserTopics();
+    getAllTopics();
 })
 
 const goToList = () => {
@@ -214,7 +214,7 @@ const submitNewTask = () => {
     const newTask = {
         _csrf_token: props.csrfToken,
         title: title.value,
-        topic: topic.value,
+        TopicIDRef: topic.value,
         category: category.value,
         priority: priority.value,
         deadlineDate: deadlineDate.value || null,
@@ -226,7 +226,7 @@ const submitNewTask = () => {
     }
 
     if (addNewTask(props.submitUrl, newTask)) {
-        // window.location.href = props.taskListUrl;
+        window.location.href = props.taskListUrl;
     } else {
         msg.value = 'Something went wrong!'
     }

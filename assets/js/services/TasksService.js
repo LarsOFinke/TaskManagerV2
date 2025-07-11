@@ -23,11 +23,11 @@ const addNewTopic = async (newTopic) => {
     }
 };
 
-const getUserTopics = async () => {
+const getAllTopics = async () => {
     loading.value = true;
     error.value = null;
     try {
-        const response = await api.get("topic/get-all");
+        const response = await api.get("api/topic/get-all");
         topicList.value = response.data.topicList;
         error.value = null;
         return true;
@@ -135,7 +135,7 @@ export function useTasksService() {
         topicList,
         doneCount,
         addNewTopic,
-        getUserTopics,
+        getAllTopics,
         addNewTask,
         getDoneTasksCount,
         deleteTask,

@@ -3,12 +3,16 @@
 namespace App\Controller\Api;
 
 use App\Entity\Task;
+use App\Enum\TaskMode;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
+use App\Service\EnumService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/api/task', name: 'api_task_')]
@@ -22,24 +26,53 @@ final class ApiTaskController extends AbstractController
         ]);
     }
 
-    #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
-    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/create', name: 'create', methods: ['POST'])]
+    public function create(Request $request, EntityManagerInterface $em, EnumService $enumServ): JsonResponse|Response
     {
-        $task = new Task();
-        $form = $this->createForm(TaskType::class, $task);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($task);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('api_todo_get_all', [], Response::HTTP_SEE_OTHER);
+        // 1) Decode JSON payload
+        $data = json_decode($request->getContent(), true);
+        // Validate CSRF:
+        if (!$this->isCsrfTokenValid('create', $data['_csrf_token'] ?? '')) {
+            throw new BadRequestHttpException('Invalid CSRF token');
         }
 
-        return $this->render('api_task/new.html.twig', [
-            'task' => $task,
-            'form' => $form,
+        /** @var \App\Entity\User|null $user */
+        $user   = $this->getUser();
+        if ($user === null) {   // Already authenticated //
+            return $this->redirectToRoute('app_login');
+        }
+
+        $task = new Task();
+        $form = $this->createForm(TaskType::class, $task, [
+            'csrf_protection' => false,
+            // you may want to allow missing fields rather than erroring:
+            'allow_extra_fields' => true,
         ]);
+        $form->submit($data);
+
+        // 3) Validate
+        if (! $form->isSubmitted() || ! $form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $err) {
+                $errors[] = [
+                    'field'   => $err->getOrigin()->getName(),
+                    'message' => $err->getMessage(),
+                ];
+            }
+            return new JsonResponse(['errors' => $errors], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        // 4) Persist and return
+        $task->setUserRef($user);
+        $task->setIsCompleted(false);
+        $task->setMode($enumServ->enumFromString('user', TaskMode::class));
+        $em->persist($task);
+        $em->flush();
+
+        return new JsonResponse([
+            'id'   => $task->getId(),
+            'mode' => $task->getMode()->value, // returns the string, e.g. "draft"
+        ], JsonResponse::HTTP_CREATED);
     }
 
     #[Route('/get/{id}', name: 'get_by_id', methods: ['GET'])]
@@ -71,7 +104,7 @@ final class ApiTaskController extends AbstractController
     #[Route('/delete/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Task $task, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$task->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $task->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($task);
             $entityManager->flush();
         }
