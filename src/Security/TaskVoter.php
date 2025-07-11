@@ -2,7 +2,7 @@
 // src/Security/TaskVoter.php
 namespace App\Security;
 
-use App\Entity\Tasks;
+use App\Entity\Task;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -18,12 +18,12 @@ class TaskVoter extends Voter
     {
         // only vote on TASK_* attributes on a Tasks object
         return in_array($attribute, [self::CREATE, self::VIEW, self::EDIT, self::DELETE], true)
-            && $subject instanceof Tasks;
+            && $subject instanceof Task;
     }
 
     /**
      * @param string   $attribute  the permission to check (VIEW, EDIT, etc)
-     * @param Tasks    $task       the subject
+     * @param Task    $task       the subject
      * @param TokenInterface $token the security token
      */
     protected function voteOnAttribute(string $attribute, $task, TokenInterface $token): bool
@@ -41,7 +41,7 @@ class TaskVoter extends Voter
             case self::VIEW:
             case self::EDIT:
             case self::DELETE:
-                return $task->getUserIDRef()->getId() === $user->getId();
+                return $task->getUserRef()->getId() === $user->getId();
         }
 
         // no other attributes are supported

@@ -7,6 +7,7 @@
 				My Task Manager
 			{% endblock %}
 		</title>
+		<meta name="csrf-token" content="{{ csrf_token('task_api') }}">
 		{{ vite_entry_link_tags('app') }}
 	</head>
 	<body>

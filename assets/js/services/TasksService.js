@@ -43,8 +43,9 @@ const addNewTask = async (submitUrl, newTask) => {
     loading.value = true;
     error.value = null;
     try {
-        await api.post(submitUrl, newTask);
-        return true;
+        if (await api.post(submitUrl, newTask)) {
+            return true;
+        }
     } catch (err) {
         error.value = err.response?.data?.message || "Adding new task failed.";
         return false;

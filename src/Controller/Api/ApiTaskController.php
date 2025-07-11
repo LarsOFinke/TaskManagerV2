@@ -6,6 +6,7 @@ use App\Entity\Task;
 use App\Enum\TaskMode;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
+use App\Security\ApiAccessChecker;
 use App\Service\EnumService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,9 +19,14 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/api/task', name: 'api_task_')]
 final class ApiTaskController extends AbstractController
 {
+    public function __construct(private ApiAccessChecker $apiCtrl) {}
     #[Route('/get-all', name: 'get_all', methods: ['GET'])]
     public function getAll(TaskRepository $taskRepository): Response
     {
+        if (!$this->apiCtrl->ensureCsrfValid('')) {
+            throw new BadRequestHttpException('Access denied!');
+        }
+
         return $this->render('api_task/index.html.twig', [
             'tasks' => $taskRepository->findAll(),
         ]);
@@ -29,23 +35,16 @@ final class ApiTaskController extends AbstractController
     #[Route('/create', name: 'create', methods: ['POST'])]
     public function create(Request $request, EntityManagerInterface $em, EnumService $enumServ): JsonResponse|Response
     {
-        // 1) Decode JSON payload
+        if (!$this->apiCtrl->ensureCsrfValid('task_api')) {
+            throw new BadRequestHttpException('Invalid CSRF token!');
+        }
         $data = json_decode($request->getContent(), true);
-        // Validate CSRF:
-        if (!$this->isCsrfTokenValid('create', $data['_csrf_token'] ?? '')) {
-            throw new BadRequestHttpException('Invalid CSRF token');
-        }
 
-        /** @var \App\Entity\User|null $user */
-        $user   = $this->getUser();
-        if ($user === null) {   // Already authenticated //
-            return $this->redirectToRoute('app_login');
-        }
+
 
         $task = new Task();
         $form = $this->createForm(TaskType::class, $task, [
             'csrf_protection' => false,
-            // you may want to allow missing fields rather than erroring:
             'allow_extra_fields' => true,
         ]);
         $form->submit($data);
@@ -63,7 +62,7 @@ final class ApiTaskController extends AbstractController
         }
 
         // 4) Persist and return
-        $task->setUserRef($user);
+        $task->setUserRef($this->getUser());
         $task->setIsCompleted(false);
         $task->setMode($enumServ->enumFromString('user', TaskMode::class));
         $em->persist($task);
@@ -71,7 +70,7 @@ final class ApiTaskController extends AbstractController
 
         return new JsonResponse([
             'id'   => $task->getId(),
-            'mode' => $task->getMode()->value, // returns the string, e.g. "draft"
+            'mode' => $task->getMode()->value,
         ], JsonResponse::HTTP_CREATED);
     }
 
