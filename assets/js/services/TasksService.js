@@ -13,7 +13,7 @@ const addNewTopic = async (newTopic) => {
     loading.value = true;
     error.value = null;
     try {
-        await api.post("tasks/create-topic", newTopic);
+        await api.post("topic/create", newTopic);
         return true;
     } catch (err) {
         error.value = err.response?.data?.message || "Adding new topic failed.";
@@ -27,7 +27,7 @@ const getUserTopics = async () => {
     loading.value = true;
     error.value = null;
     try {
-        const response = await api.get("tasks/get-user-topics");
+        const response = await api.get("topic/get-all");
         topicList.value = response.data.topicList;
         error.value = null;
         return true;

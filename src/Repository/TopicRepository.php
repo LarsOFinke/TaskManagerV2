@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Topic;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -15,6 +16,21 @@ class TopicRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Topic::class);
     }
+
+    // /**
+    //  * @return Collection <int, Topic>
+    //  */
+    // public function getAllByUser(int $userId): Collection
+    // {
+    //     return $this->createQueryBuilder('t')
+    //         ->andWhere('t.UserRef = :val')
+    //         ->setParameter('val', $userId)
+    //         ->orderBy('t.id', 'ASC')
+    //         ->setMaxResults(10)
+    //         ->getQuery()
+    //         ->getResult()
+    //     ;
+    // }
 
     //    /**
     //     * @return Topic[] Returns an array of Topic objects

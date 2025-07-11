@@ -7,6 +7,7 @@ use App\Form\TopicType;
 use App\Repository\TopicRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,11 +16,21 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ApiTopicController extends AbstractController
 {
     #[Route('/get-all', name: 'get_all', methods: ['GET'])]
-    public function getAll(TopicRepository $topicRepository): Response
+    public function getAll(TopicRepository $topicRepository): JsonResponse
     {
-        return $this->render('api_topic/index.html.twig', [
-            'topics' => $topicRepository->findAll(),
-        ]);
+        // findAll() returns an array, so use array_map:
+        $topicList = array_map(
+            fn(Topic $t): array => [
+                'id'   => $t->getId(),
+                'name' => $t->getName(),
+            ],
+            $topicRepository->findAll()
+        );
+
+        // return JSON with 200 status:
+        return $this->json([
+            'topicList' => $topicList,
+        ], JsonResponse::HTTP_OK);
     }
 
     #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
@@ -45,8 +56,11 @@ final class ApiTopicController extends AbstractController
     #[Route('/get/{id}', name: 'get_by_id', methods: ['GET'])]
     public function getById(Topic $topic): Response
     {
-        return $this->render('api_topic/show.html.twig', [
-            'topic' => $topic,
+        return $this->json([
+            'topic' => [
+                "id"    => $topic->getId(),
+                "name"  => $topic->getName(),
+            ],
         ]);
     }
 
@@ -71,7 +85,7 @@ final class ApiTopicController extends AbstractController
     #[Route('/delete/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Topic $topic, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$topic->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $topic->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($topic);
             $entityManager->flush();
         }
