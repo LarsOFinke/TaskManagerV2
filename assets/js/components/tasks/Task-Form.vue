@@ -219,7 +219,7 @@ const submitNewTask = async () => {
         startDate: startDate.value || null,
         remainingTime: 'XXd:XXh:XXmin left',
         description: description.value,
-        todoList: todoList.value.map(t => t.text),
+        todoList: todoList.value,
     }
 
     if (await addNewTask(props.submitUrl, newTask)) {

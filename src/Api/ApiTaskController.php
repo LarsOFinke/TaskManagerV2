@@ -2,6 +2,7 @@
 
 namespace App\Api;
 
+use Error;
 use App\Repository\TaskRepository;
 use App\Security\ApiAccessChecker;
 use App\Service\TaskService;
@@ -40,11 +41,11 @@ final class ApiTaskController extends AbstractController
 
         try {
             $this->taskService->createNewTask($request, $this->getUser());
-        } catch (BadRequestHttpException $e) {
+        } catch (Error $e) {
             return $this->json([
                 'success' => false,
                 'errors'  => $e->getMessage()
-            ], JsonResponse::HTTP_BAD_REQUEST);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return new JsonResponse(['success' => true], JsonResponse::HTTP_CREATED);

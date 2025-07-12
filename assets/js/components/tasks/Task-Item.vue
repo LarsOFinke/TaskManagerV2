@@ -53,7 +53,7 @@
                 class="w-full text-sm max-w-sm bg-gray-500 rounded-lg shadow-md p-1 mx-auto relative mb-2">
                 <div class="text-sm mb-2 overflow-x-auto pl-6 max-h-25">
                     <ul v-for="todo in todoList" :key="todo.id" class="list-disc">
-                        <li :value="todo.id" :class="{ 'line-through': !todo.isOpen }"
+                        <li :value="todo.id" :class="{ 'line-through': todo.isCompleted }"
                             class="cursor-pointer shadow-md my-3 mr-2" @click.prevent="toggleTodoStatus(todo)">
                             <div class="flex justify-between items-center">
                                 <p>{{ todo.text }}</p>
@@ -105,7 +105,7 @@ const msg = ref('')
 const errorPhrase = ref('')
 const emit = defineEmits(['hideItemEdit', 'updateTaskList', 'closeItem'])
 const showTodos = ref(true)
-const doneTodos = computed(() => { todoList.value.filter(t => !t.isOpen).length })
+const doneTodos = computed(() => { todoList.value.filter(t => !t.isCompleted).length })
 const totalTodos = computed(() => { todoList.value.length })
 const itemCloseable = computed(() => { !(doneTodos.value < totalTodos.value) })
 
@@ -122,13 +122,13 @@ const goEdit = () => {
 }
 
 const toggleTodoStatus = async (todo) => {
-    if (todo.isOpen) {
+    if (!todo.isCompleted) {
         if (await closeTodo(todo.id)) {
-            todo.isOpen = false
+            todo.isCompleted = false
         }
     } else {
         if (await openTodo(todo.id)) {
-            todo.isOpen = true
+            todo.isCompleted = true
         }
     }
 }

@@ -42,9 +42,10 @@ class TaskService
             $task->setDescription($data['description']);
             $task->setIsCompleted(false);
             $this->em->persist($task);
-            $this->em->flush();
+            $this->todoService->createTodoList($data['todoList'], $task);
         } catch (Error $e) {
-            throw new BadRequestHttpException('Couldnt create task: ' . $e);
+            throw new Error('Couldnt create task: ' . $e);
         }
+        $this->em->flush();
     }
 }
