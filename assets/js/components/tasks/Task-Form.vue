@@ -27,7 +27,8 @@
                     <select name="topic" v-model.trim="topic"
                         class="ml-1 focus:outline-none focus:ring-2 focus:ring-indigo-500 border-gray-300 rounded-md shadow-sm"
                         required>
-                        <option v-for="tpc in topicList" :key="tpc.id" :value="tpc.id" class="text-gray-100 bg-gray-700">{{ tpc.name }}</option>
+                        <option v-for="tpc in topicList" :key="tpc.id" :value="tpc.id"
+                            class="text-gray-100 bg-gray-700">{{ tpc.name }}</option>
                     </select>
                     <button @click.prevent="toggleNewTopic(true)" type="button"
                         class="w-fit text-sm bg-indigo-700 text-gray-100 p-1 rounded-md hover:bg-indigo-600 transition">Add</button>
@@ -154,7 +155,7 @@ import { ref, onMounted } from 'vue'
 import MessageBox from '@/components/shared/Message-Box.vue';
 import { useApiTopicService } from '@/api/services/ApiTopicService';
 import { useApiTaskService } from '@/api/services/ApiTaskService';
-const { topicList, getAllTopics, addNewTopic, loading, error} = useApiTopicService();
+const { topicList, getAllTopics, addNewTopic, loading, error } = useApiTopicService();
 const { addNewTask } = useApiTaskService();
 const props = defineProps({
     submitUrl: { type: String, required: true },

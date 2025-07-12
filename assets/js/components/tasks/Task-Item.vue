@@ -105,13 +105,9 @@ const msg = ref('')
 const errorPhrase = ref('')
 const emit = defineEmits(['hideItemEdit', 'updateTaskList', 'closeItem'])
 const showTodos = ref(true)
-const doneTodos = computed(() => { return todoList.value.filter(t => !t.isOpen).length })
-const totalTodos = computed(() => {
-    return todoList.value.length
-})
-const itemCloseable = computed(() => {
-    return !(doneTodos.value < totalTodos.value)
-})
+const doneTodos = computed(() => { todoList.value.filter(t => !t.isOpen).length })
+const totalTodos = computed(() => { todoList.value.length })
+const itemCloseable = computed(() => { !(doneTodos.value < totalTodos.value) })
 
 const toggleShowTodos = (toggleOn) => {
     if (toggleOn) {
