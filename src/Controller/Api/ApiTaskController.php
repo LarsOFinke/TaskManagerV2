@@ -19,13 +19,13 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/api/task', name: 'api_task_')]
 final class ApiTaskController extends AbstractController
 {
-    public function __construct(private ApiAccessChecker $apiCtrl) {}
+    public function __construct(private ApiAccessChecker $accessChecker) {}
     #[Route('/get-all', name: 'get_all', methods: ['GET'])]
     public function getAll(TaskRepository $taskRepository): Response
     {
-        if (!$this->apiCtrl->ensureCsrfValid('')) {
-            throw new BadRequestHttpException('Access denied!');
-        }
+        // if (!$this->accessChecker->ensureCsrfValid('')) {
+        //     throw new BadRequestHttpException('Access denied!');
+        // }
 
         return $this->render('api_task/index.html.twig', [
             'tasks' => $taskRepository->findAll(),
@@ -35,9 +35,17 @@ final class ApiTaskController extends AbstractController
     #[Route('/create', name: 'create', methods: ['POST'])]
     public function create(Request $request, EntityManagerInterface $em, EnumService $enumServ): JsonResponse|Response
     {
-        if (!$this->apiCtrl->ensureCsrfValid('task_api')) {
-            throw new BadRequestHttpException('Invalid CSRF token!');
+        $csrfToken = $request?->headers->get('X-CSRF-TOKEN');
+
+        try {
+            $this->accessChecker->ensureCsrfValid('task_api', $csrfToken);
+        } catch (BadRequestHttpException $e) {
+            return $this->json([
+                'success' => false,
+                'errors'  => $e->getMessage()
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
+
         $data = json_decode($request->getContent(), true);
 
 
@@ -58,7 +66,13 @@ final class ApiTaskController extends AbstractController
                     'message' => $err->getMessage(),
                 ];
             }
-            return new JsonResponse(['errors' => $errors], JsonResponse::HTTP_BAD_REQUEST);
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'errors' => $errors
+                ],
+                JsonResponse::HTTP_BAD_REQUEST
+            );
         }
 
         // 4) Persist and return
@@ -69,6 +83,7 @@ final class ApiTaskController extends AbstractController
         $em->flush();
 
         return new JsonResponse([
+            'success' => true,
             'id'   => $task->getId(),
             'mode' => $task->getMode()->value,
         ], JsonResponse::HTTP_CREATED);
@@ -78,6 +93,7 @@ final class ApiTaskController extends AbstractController
     public function getById(Task $task): Response
     {
         return $this->render('api_task/show.html.twig', [
+            'success' => false,
             'task' => $task,
         ]);
     }

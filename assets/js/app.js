@@ -28,7 +28,7 @@ window.addEventListener("DOMContentLoaded", () => {
         console.error("❌ CSRF meta tag not found!");
     } else {
         const token = meta.getAttribute("content");
-        console.log("✅ CSRF token set on axios instance:", token);
+        console.log("✅ CSRF token set!");
 
         // 2) Set it on your API instance
         environment.api.defaults.headers.common["X-CSRF-TOKEN"] = token;

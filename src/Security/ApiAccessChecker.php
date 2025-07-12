@@ -1,26 +1,5 @@
 <?php
 
-// namespace App\Security;
-
-// use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-// use Symfony\Component\HttpFoundation\Response;
-
-// class ApiAccessChecker extends AbstractController
-// {
-//     public function grantApiAccess(string $submittedToken): bool|Response
-//     {
-//         if ($submittedToken && $this->isCsrfTokenValid('api', $submittedToken)) {
-//             return true;
-//         } elseif (!$submittedToken && $this->getUser() !== null) {
-//             return true;
-//         }
-//         return false;
-//     }
-// }
-
-
-
-// src/Security/ApiAccessChecker.php
 namespace App\Security;
 
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -38,11 +17,8 @@ class ApiAccessChecker
     /**
      * @throws BadRequestHttpException if access is denied
      */
-    public function ensureCsrfValid(string $tokenId): void
+    public function ensureCsrfValid(string $tokenId, ?string $submitted): void
     {
-        $request = $this->requestStack->getCurrentRequest();
-        $submitted = $request?->headers->get('X-CSRF-TOKEN');
-
         if (! $this->csrfTokenManager->isTokenValid(
             new CsrfToken($tokenId, $submitted)
         )) {

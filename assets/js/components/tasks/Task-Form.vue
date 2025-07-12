@@ -209,7 +209,7 @@ const addToDo = () => {
     newTodo.value = ''
 }
 
-const submitNewTask = () => {
+const submitNewTask = async () => {
     const newTask = {
         title: title.value,
         TopicIDRef: topic.value,
@@ -223,7 +223,7 @@ const submitNewTask = () => {
         todoList: todoList.value.map(t => t.text),
     }
 
-    if (addNewTask(props.submitUrl, newTask)) {
+    if (await addNewTask(props.submitUrl, newTask)) {
         window.location.href = props.taskListUrl;
     } else {
         msg.value = 'Something went wrong!'
