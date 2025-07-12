@@ -151,7 +151,7 @@
 <script setup>
 import MessageBox from '@/components/shared/Message-Box.vue';
 import { ref, onMounted, watch } from 'vue'
-import { useTasksService } from '@/services/TasksService'
+import { useTaskService } from '@/services/TaskService'
 
 const props = defineProps({
     taskListUrl: String,
@@ -159,7 +159,7 @@ const props = defineProps({
 })
 const msg = ref('')
 const errorPhrase = ref('')
-const { loading, topicList, getAllTopics } = useTasksService()
+const { loading, topicList, getAllTopics } = useTaskService()
 const priority = ref(props.task.priority)
 const topic = ref(props.task.topic)
 const category = ref(props.task.category)

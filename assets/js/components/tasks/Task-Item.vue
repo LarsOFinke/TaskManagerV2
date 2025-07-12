@@ -93,14 +93,14 @@
 
 <script setup>
 import MessageBox from '@/components/shared/Message-Box.vue';
-import { useTasksService } from '@/services/TasksService';
+import { useTaskService } from '@/services/TaskService';
 import { ref, watch, computed } from 'vue'
 
 const props = defineProps({
     task: Object
 })
 const todoList = ref(Array.isArray(props.task.todoList) ? [...props.task.todoList] : [])
-const { closeTodo, openTodo, loading, error } = useTasksService();
+const { closeTodo, openTodo, loading, error } = useTaskService();
 const msg = ref('')
 const errorPhrase = ref('')
 const emit = defineEmits(['hideItemEdit', 'updateTaskList', 'closeItem'])

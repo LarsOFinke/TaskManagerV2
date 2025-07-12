@@ -152,7 +152,8 @@
 <script setup>
 import MessageBox from '@/components/shared/Message-Box.vue';
 import { ref, onMounted } from 'vue'
-import { useTasksService } from '@/services/TasksService';
+import { useTopicService } from '../../services/TodoService';
+import { useTaskService } from '@/services/TaskService';
 
 const props = defineProps({
     submitUrl: { type: String, required: true },
@@ -160,7 +161,8 @@ const props = defineProps({
 })
 const msg = ref('')
 const errorPhrase = ref('')
-const { addNewTopic, topicList, getAllTopics, addNewTask } = useTasksService();
+const { topicList, getAllTopics, addNewTopic, loading, error} = useTopicService();
+const { addNewTask } = useTaskService();
 const priority = ref('')
 const topic = ref('')
 const newTopicName = ref('')
