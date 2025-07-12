@@ -74,7 +74,7 @@ const closeTask = async (taskId) => {
 };
 
 
-export function useTaskService() {
+export function useApiTaskService() {
     return {
         loading,
         error,
@@ -83,7 +83,5 @@ export function useTaskService() {
         getDoneTasksCount,
         deleteTask,
         closeTask,
-        closeTodo,
-        openTodo,
     };
 }

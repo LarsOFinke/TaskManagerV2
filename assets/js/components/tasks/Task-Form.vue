@@ -150,19 +150,19 @@
 </template>
 
 <script setup>
-import MessageBox from '@/components/shared/Message-Box.vue';
 import { ref, onMounted } from 'vue'
-import { useTopicService } from '../../services/TopicService';
-import { useTaskService } from '@/services/TaskService';
-
+import MessageBox from '@/components/shared/Message-Box.vue';
+import { useApiTopicService } from '@/components/api/services/ApiTopicService';
+import { useApiTaskService } from '@/components/api/services/ApiTaskService';
+const { topicList, getAllTopics, addNewTopic, loading, error} = useApiTopicService();
+const { addNewTask } = useApiTaskService();
 const props = defineProps({
     submitUrl: { type: String, required: true },
     taskListUrl: { type: String, required: true },
 })
+
 const msg = ref('')
 const errorPhrase = ref('')
-const { topicList, getAllTopics, addNewTopic, loading, error} = useTopicService();
-const { addNewTask } = useTaskService();
 const priority = ref('')
 const topic = ref('')
 const newTopicName = ref('')

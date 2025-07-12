@@ -31,15 +31,15 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import MessageBox from '@/components/shared/Message-Box.vue';
 import TaskItem from '@/components/tasks/Task-Item.vue';
-import { ref } from 'vue';
-
 const props = defineProps({
     header: { type: String, required: true },
     taskFormUrl: { type: String, required: true },
     taskList: { type: String, required: true },
 })
+
 const taskList = ref(JSON.parse(props.taskList))
 const msg = ref('')
 const errorPhrase = ref('')

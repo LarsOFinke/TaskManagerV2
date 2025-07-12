@@ -1,47 +1,45 @@
+// Implement todoList instead of using it in the task-object to further separate concerns!?
+
 import { ref } from "vue";
 import environment from "@/environments/environment";
 
 const api = environment.api;
 const loading = ref(false);
 const error = ref(null);
-const topicList = ref([]);
 
-const addNewTopic = async (newTopic) => {
+const closeTodo = async (todoId) => {
     loading.value = true;
     error.value = null;
     try {
-        await api.post("topic/create", newTopic);
+        await api.post("todos/close", { todoId });
         return true;
     } catch (err) {
-        error.value = err.response?.data?.message || "Adding new topic failed.";
+        error.value = err.response?.data?.message || "Closing todo failed.";
         return false;
     } finally {
         loading.value = false;
     }
 };
 
-const getAllTopics = async () => {
+const openTodo = async (todoId) => {
     loading.value = true;
     error.value = null;
     try {
-        const response = await api.get("api/topic/get-all");
-        topicList.value = response.data.topicList;
-        error.value = null;
+        await api.post("todos/open", { todoId });
         return true;
     } catch (err) {
-        error.value = err.response?.data?.message || "Fetching topics failed.";
+        error.value = err.response?.data?.message || "Opening todo failed.";
         return false;
     } finally {
         loading.value = false;
     }
 };
 
-export function useTopicService() {
+export function useApiTodoService() {
     return {
         loading,
         error,
-        topicList,
-        addNewTopic,
-        getAllTopics,
+        closeTodo,
+        openTodo,
     };
 }
