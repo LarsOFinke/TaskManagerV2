@@ -19,17 +19,12 @@ final class ApiTopicService extends AbstractController
     public function __construct(private ApiAccessChecker $accessChecker, private TopicService $topicService) {}
 
     #[Route('/get-all', name: 'get_all', methods: ['GET'])]
-    public function getAll(TopicRepository $topicRepository): JsonResponse
+    public function getAll(): JsonResponse
     {
-        $topicList = array_map(
-            fn(Topic $t): array => [
-                'id'   => $t->getId(),
-                'name' => $t->getName(),
-            ],
-            $topicRepository->findAll()
-        );
+        $topicList = $this->topicService->fetchAllTopics();
 
         return $this->json([
+            'success'   => true,
             'topicList' => $topicList,
         ], JsonResponse::HTTP_OK);
     }

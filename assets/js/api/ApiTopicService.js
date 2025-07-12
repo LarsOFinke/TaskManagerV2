@@ -18,7 +18,6 @@ export function useApiTopicService() {
         error.value = null;
         try {
             const response = await api.post("api/topic/create", newTopic);
-            console.log(response);
             if (response.data.success) {
                 return true;
             }
@@ -37,9 +36,8 @@ export function useApiTopicService() {
         error.value = null;
         try {
             const response = await api.get("/api/topic/get-all");
-            topicList.value = res.data.topicList;
-            console.log(response);
             if (response.data.success) {
+                topicList.value = response.data.topicList;
                 return true;
             }
             return false;
