@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Topic;
-use App\Form\Topic1Type;
+use App\Form\TopicType;
 use App\Repository\TopicRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,7 +26,7 @@ final class AdminTopicController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $topic = new Topic();
-        $form = $this->createForm(Topic1Type::class, $topic);
+        $form = $this->createForm(TopicType::class, $topic);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -53,7 +53,7 @@ final class AdminTopicController extends AbstractController
     #[Route('/{id}/edit', name: 'app_admin_topic_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Topic $topic, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(Topic1Type::class, $topic);
+        $form = $this->createForm(TopicType::class, $topic);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

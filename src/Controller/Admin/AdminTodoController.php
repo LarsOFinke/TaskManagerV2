@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Todo;
-use App\Form\Todo1Type;
+use App\Form\TodoType;
 use App\Repository\TodoRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,7 +26,7 @@ final class AdminTodoController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $todo = new Todo();
-        $form = $this->createForm(Todo1Type::class, $todo);
+        $form = $this->createForm(TodoType::class, $todo);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -53,7 +53,7 @@ final class AdminTodoController extends AbstractController
     #[Route('/{id}/edit', name: 'app_admin_todo_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Todo $todo, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(Todo1Type::class, $todo);
+        $form = $this->createForm(TodoType::class, $todo);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

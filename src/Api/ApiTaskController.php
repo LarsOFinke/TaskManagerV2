@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -22,7 +21,7 @@ final class ApiTaskController extends AbstractController
     public function __construct(private ApiAccessChecker $accessChecker) {}
 
     #[Route('/get-all', name: 'get_all', methods: ['GET'])]
-    public function getAll(TaskRepository $taskRepository): Response
+    public function getAll(TaskRepository $taskRepository): JsonResponse
     {
         return $this->render('api_task/index.html.twig', [
             'tasks' => $taskRepository->findAll(),
@@ -30,7 +29,7 @@ final class ApiTaskController extends AbstractController
     }
 
     #[Route('/create', name: 'create', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $em, EnumService $enumServ): JsonResponse|Response
+    public function create(Request $request, EntityManagerInterface $em, EnumService $enumServ): JsonResponse
     {
         // Security-checks
         $csrfToken = $request?->headers->get('X-CSRF-TOKEN');
@@ -79,58 +78,5 @@ final class ApiTaskController extends AbstractController
             'id'   => $task->getId(),
             'mode' => $task->getMode()->value,
         ], JsonResponse::HTTP_CREATED);
-    }
-
-    #[Route('/get/{id}', name: 'get_by_id', methods: ['GET'])]
-    public function getById(Task $task): Response
-    {
-        return $this->render('api_task/show.html.twig', [
-            'success' => false,
-            'task' => $task,
-        ]);
-    }
-
-    #[Route('/edit/{id}', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Task $task, EntityManagerInterface $entityManager): Response
-    {
-        // Security-checks
-        $csrfToken = $request?->headers->get('X-CSRF-TOKEN');
-        try {
-            $this->accessChecker->ensureCsrfValid('task_api', $csrfToken);
-        } catch (BadRequestHttpException $e) {
-            return $this->json([
-                'success' => false,
-                'errors'  => $e->getMessage()
-            ], JsonResponse::HTTP_BAD_REQUEST);
-        }
-
-        $form = $this->createForm(TaskType::class, $task);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-            return $this->redirectToRoute('api_todo_get_all', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('api_task/edit.html.twig', [
-            'task' => $task,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/delete/{id}', name: 'delete', methods: ['POST'])]
-    public function delete(Request $request, Task $task, EntityManagerInterface $entityManager): Response
-    {
-        // Security-checks
-        $csrfToken = $request?->headers->get('X-CSRF-TOKEN');
-        try {
-            $this->accessChecker->ensureCsrfValid('task_api', $csrfToken);
-        } catch (BadRequestHttpException $e) {
-            return $this->json([
-                'success' => false,
-                'errors'  => $e->getMessage()
-            ], JsonResponse::HTTP_BAD_REQUEST);
-        }
-
-        return $this->redirectToRoute('api_todo_get_all', [], Response::HTTP_SEE_OTHER);
     }
 }
