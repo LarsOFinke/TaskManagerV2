@@ -24,6 +24,10 @@ class Topic
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'TopicIDRef', orphanRemoval: true)]
     private Collection $tasks;
 
+    #[ORM\ManyToOne(inversedBy: 'topics')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $UserRef = null;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
@@ -72,6 +76,18 @@ class Topic
                 $task->setTopicIDRef(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUserRef(): ?User
+    {
+        return $this->UserRef;
+    }
+
+    public function setUserRef(?User $UserRef): static
+    {
+        $this->UserRef = $UserRef;
 
         return $this;
     }

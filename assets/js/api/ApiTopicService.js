@@ -17,8 +17,12 @@ export function useApiTopicService() {
         loading.value = true;
         error.value = null;
         try {
-            await api.post("/topic/create", newTopic);
-            return true;
+            const response = await api.post("api/topic/create", newTopic);
+            console.log(response);
+            if (response.data.success) {
+                return true;
+            }
+            return false;
         } catch (err) {
             error.value =
                 err.response?.data?.message || "Adding new topic failed.";
@@ -32,9 +36,13 @@ export function useApiTopicService() {
         loading.value = true;
         error.value = null;
         try {
-            const res = await api.get("/api/topic/get-all");
+            const response = await api.get("/api/topic/get-all");
             topicList.value = res.data.topicList;
-            return true;
+            console.log(response);
+            if (response.data.success) {
+                return true;
+            }
+            return false;
         } catch (err) {
             error.value =
                 err.response?.data?.message || "Fetching topics failed.";

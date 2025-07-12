@@ -18,7 +18,6 @@ export function useApiTaskService() {
         error.value = null;
         try {
             const response = await api.post(submitUrl, newTask);
-            console.log(response);
             if (response.data.success) {
                 return true;
             }

@@ -16,20 +16,6 @@ class TaskService
 {
     public function __construct(private EntityManagerInterface $em, private EnumService $enumServ, private TopicService $topicService, private TodoService $todoService, private TopicRepository $topicRepo) {}
 
-    public function mapTasks(Collection $tasks): array
-    {
-        return $tasks
-            ->map(fn(Task $t): array => [
-                'id'            => $t->getId(),
-                'isCompleted'   => $t->isCompleted(),
-                'topic'         => $this->topicService->mapTopic($t->getTopicIDRef()),
-                'title'         => $t->getTitle(),
-                'description'   => $t->getDescription(),
-                'todoList'      => $this->todoService->mapTodos($t->getTodos())
-            ])
-            ->toArray();
-    }
-
     public function createNewTask(Request $request, User $user): void
     {
         try {
@@ -43,9 +29,23 @@ class TaskService
             $task->setIsCompleted(false);
             $this->em->persist($task);
             $this->todoService->createTodoList($data['todoList'], $task);
+            $this->em->flush();
         } catch (Error $e) {
             throw new Error('Couldnt create task: ' . $e);
         }
-        $this->em->flush();
+    }
+
+    public function mapTasks(Collection $tasks): array
+    {
+        return $tasks
+            ->map(fn(Task $t): array => [
+                'id'            => $t->getId(),
+                'isCompleted'   => $t->isCompleted(),
+                'topic'         => $this->topicService->mapTopic($t->getTopicIDRef()),
+                'title'         => $t->getTitle(),
+                'description'   => $t->getDescription(),
+                'todoList'      => $this->todoService->mapTodos($t->getTodos())
+            ])
+            ->toArray();
     }
 }
