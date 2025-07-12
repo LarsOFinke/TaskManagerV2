@@ -15,10 +15,19 @@ final class TaskController extends AbstractController
     #[Route('/list', name: 'list')]
     public function list(): Response
     {
-        /** @var \App\Entity\User|null $user */
+        /** @var \App\Entity\User|null $user 
+         */
         $user   = $this->getUser();
         $tasks = $user->getTasks();
-        $taskList = json_encode($tasks, JSON_THROW_ON_ERROR);
+        $taskList = json_encode($tasks
+            ->map(fn(Task $t): array => [
+                'title'       => $t->getTitle(),
+                'description' => $t->getDescription(),
+                'mode'        => $t->getMode(),
+                'isCompleted' => $t->isCompleted(),
+                'topic'       => $t->getTopicIDRef()?->getName(),
+            ])
+            ->toArray());
 
         return $this->render('task/task_list.html.twig', [
             'header'   => 'My Task List',

@@ -9,7 +9,6 @@ export function useApiTopicService() {
                 "Hast du in app.js `provide('api', api)` gesetzt?"
         );
     }
-
     const loading = ref(false);
     const error = ref(null);
     const topicList = ref([]);

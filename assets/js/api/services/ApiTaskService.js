@@ -5,7 +5,7 @@ export function useApiTaskService() {
     const api = inject("api");
     if (!api) {
         throw new Error(
-            "[useApiTodoService] Axios-Instanz wurde nicht gefunden. " +
+            "[useApiTaskService] Axios-Instanz wurde nicht gefunden. " +
                 "Hast du in app.js `provide('api', api)` gesetzt?"
         );
     }
