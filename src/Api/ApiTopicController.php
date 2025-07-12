@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Api;
+namespace App\Api;
 
 use App\Entity\Topic;
 use App\Form\TopicType;

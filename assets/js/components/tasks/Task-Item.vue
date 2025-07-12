@@ -120,6 +120,7 @@ const toggleShowTodos = (toggleOn) => {
 const goEdit = () => {
     window.location.href = props.task.editUrl;
 }
+
 const toggleTodoStatus = async (todo) => {
     if (todo.isOpen) {
         if (await closeTodo(todo.id)) {
@@ -132,14 +133,14 @@ const toggleTodoStatus = async (todo) => {
     }
 }
 
-// const deleteItem = async () => {
-//     await deleteTask(task.id)
-//     updateList()
-// }
+const deleteItem = async () => {
+    await deleteTask(task.id)
+    updateList()
+}
 
-// const closeItem = async () => {
-//     await closeTask(task.id)
-//     updateList()
-// }
+const closeItem = async () => {
+    await closeTask(task.id)
+    updateList()
+}
 
 </script>
