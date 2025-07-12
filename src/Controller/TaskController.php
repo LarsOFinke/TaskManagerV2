@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Task;
 use App\Enum\TaskMode;
 use App\Form\TaskFormType;
+use App\Service\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -13,25 +14,16 @@ use Symfony\Component\Routing\Attribute\Route;
 final class TaskController extends AbstractController
 {
     #[Route('/list', name: 'list')]
-    public function list(): Response
+    public function list(TaskService $taskService): Response
     {
         /** @var \App\Entity\User|null $user 
          */
         $user   = $this->getUser();
-        $tasks = $user->getTasks();
-        $taskList = json_encode($tasks
-            ->map(fn(Task $t): array => [
-                'title'       => $t->getTitle(),
-                'description' => $t->getDescription(),
-                'mode'        => $t->getMode(),
-                'isCompleted' => $t->isCompleted(),
-                'topic'       => $t->getTopicIDRef()?->getName(),
-            ])
-            ->toArray());
+        $taskList = $taskService->mapTasks($user->getTasks());
 
         return $this->render('task/task_list.html.twig', [
             'header'   => 'My Task List',
-            'taskList' => $taskList,
+            'taskList' => json_encode($taskList),
         ]);
     }
 
