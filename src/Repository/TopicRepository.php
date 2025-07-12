@@ -16,7 +16,7 @@ class TopicRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Topic::class);
     }
-
+    
     // /**
     //  * @return Collection <int, Topic>
     //  */

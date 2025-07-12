@@ -124,10 +124,6 @@
                 </div>
 
                 <!-- Scrollable To-Do-List -->
-                <!-- hidden JSON dump of the entire todoList -->
-                <template v-for="(todo, i) in todoList" :key="i">
-                    <input type="hidden" name="todoList[]" :value="todo.text" />
-                </template>
                 <div class="overflow-x-auto max-h-95 shadow-md p-6 text-gray-100">
                     <ul v-for="todo in todoList" :key="todo.id" class="list-disc">
                         <li>{{ todo.text }}</li>
@@ -215,7 +211,7 @@ const addToDo = () => {
 const submitNewTask = async () => {
     const newTask = {
         title: title.value,
-        TopicIDRef: topic.value,
+        topic: topic.value,
         category: category.value,
         priority: priority.value,
         deadlineDate: deadlineDate.value || null,

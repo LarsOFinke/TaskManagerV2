@@ -2,13 +2,9 @@
 
 namespace App\Api;
 
-use App\Entity\Task;
-use App\Enum\TaskMode;
-use App\Form\TaskType;
 use App\Repository\TaskRepository;
 use App\Security\ApiAccessChecker;
-use App\Service\EnumService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/api/task', name: 'api_task_')]
 final class ApiTaskController extends AbstractController
 {
-    public function __construct(private ApiAccessChecker $accessChecker) {}
+    public function __construct(private ApiAccessChecker $accessChecker, private TaskService $taskService) {}
 
     #[Route('/get-all', name: 'get_all', methods: ['GET'])]
     public function getAll(TaskRepository $taskRepository): JsonResponse
@@ -29,7 +25,7 @@ final class ApiTaskController extends AbstractController
     }
 
     #[Route('/create', name: 'create', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $em, EnumService $enumServ): JsonResponse
+    public function create(Request $request): JsonResponse
     {
         // Security-checks
         $csrfToken = $request?->headers->get('X-CSRF-TOKEN');
@@ -42,41 +38,15 @@ final class ApiTaskController extends AbstractController
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        $task = new Task();
-        $form = $this->createForm(TaskType::class, $task, [
-            'csrf_protection' => false,
-            'allow_extra_fields' => true,
-        ]);
-        $data = json_decode($request->getContent(), true);
-        $form->submit($data);
-        if (! $form->isSubmitted() || ! $form->isValid()) {
-            $errors = [];
-            foreach ($form->getErrors(true) as $err) {
-                $errors[] = [
-                    'field'   => $err->getOrigin()->getName(),
-                    'message' => $err->getMessage(),
-                ];
-            }
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'errors' => $errors
-                ],
-                JsonResponse::HTTP_BAD_REQUEST
-            );
+        try {
+            $this->taskService->createNewTask($request, $this->getUser());
+        } catch (BadRequestHttpException $e) {
+            return $this->json([
+                'success' => false,
+                'errors'  => $e->getMessage()
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        // Fill default task-data, persist and return
-        $task->setUserRef($this->getUser());
-        $task->setIsCompleted(false);
-        $task->setMode($enumServ->enumFromString('user', TaskMode::class));
-        $em->persist($task);
-        $em->flush();
-
-        return new JsonResponse([
-            'success' => true,
-            'id'   => $task->getId(),
-            'mode' => $task->getMode()->value,
-        ], JsonResponse::HTTP_CREATED);
+        return new JsonResponse(['success' => true], JsonResponse::HTTP_CREATED);
     }
 }
