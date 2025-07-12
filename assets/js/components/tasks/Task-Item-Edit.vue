@@ -159,7 +159,8 @@ const props = defineProps({
 })
 const msg = ref('')
 const errorPhrase = ref('')
-const { loading, topicList, getAllTopics } = useTaskService()
+const { loading } = useTaskService()
+const { topicList, getAllTopics} = useTopicService();
 const priority = ref(props.task.priority)
 const topic = ref(props.task.topic)
 const category = ref(props.task.category)

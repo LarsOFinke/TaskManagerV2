@@ -152,7 +152,7 @@
 <script setup>
 import MessageBox from '@/components/shared/Message-Box.vue';
 import { ref, onMounted } from 'vue'
-import { useTopicService } from '../../services/TodoService';
+import { useTopicService } from '../../services/TopicService';
 import { useTaskService } from '@/services/TaskService';
 
 const props = defineProps({
