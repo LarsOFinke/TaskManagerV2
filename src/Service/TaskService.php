@@ -4,20 +4,22 @@ namespace App\Service;
 
 use App\Entity\Task;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class TaskService extends AbstractController
+class TaskService
 {
+
+    public function __construct(private TodoService $todoService) {}
 
     public function mapTasks(Collection $tasks): array
     {
         return $tasks
             ->map(fn(Task $t): array => [
                 'id'            => $t->getId(),
-                'title'         => $t->getTitle(),
-                'description'   => $t->getDescription(),
                 'isCompleted'   => $t->isCompleted(),
                 'topic'         => $t->getTopicIDRef()?->getName(),
+                'title'         => $t->getTitle(),
+                'description'   => $t->getDescription(),
+                'todoList'      => $this->todoService->mapTodos($t->getTodos())
             ])
             ->toArray();
     }

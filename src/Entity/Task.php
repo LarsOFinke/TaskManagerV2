@@ -45,7 +45,6 @@ class Task
     public function __construct()
     {
         $this->todos = new ArrayCollection();
-        $this->todos = $this->getTodos();
     }
 
     public function getId(): ?int
