@@ -13,11 +13,11 @@ class TaskService extends AbstractController
     {
         return $tasks
             ->map(fn(Task $t): array => [
-                'title'       => $t->getTitle(),
-                'description' => $t->getDescription(),
-                'mode'        => $t->getMode(),
-                'isCompleted' => $t->isCompleted(),
-                'topic'       => $t->getTopicIDRef()?->getName(),
+                'id'            => $t->getId(),
+                'title'         => $t->getTitle(),
+                'description'   => $t->getDescription(),
+                'isCompleted'   => $t->isCompleted(),
+                'topic'         => $t->getTopicIDRef()?->getName(),
             ])
             ->toArray();
     }
