@@ -1,7 +1,7 @@
 import "../styles/app.css";
 import { createApp } from "vue";
 import axios from "axios";
-import environment from "@/environments/environment";
+import config from "@/config";
 import NavbarItem from "@/components/shared/Navbar-Item.vue";
 import FooterItem from "@/components/shared/Footer-Item.vue";
 import MessageBox from "@/components/shared/Message-Box.vue";
@@ -21,27 +21,33 @@ const components = {
     FooterItem,
 };
 
-window.addEventListener("DOMContentLoaded", () => {
-    // 1) Pull the token out of the meta
+window.addEventListener("DOMContentLoaded", async () => {
+    // 1) Axios-Instanz bauen
+    const api = axios.create({
+        baseURL: config.apiBase,
+        withCredentials: true,
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+    });
+
+    // 2) CSRF-Token setzen (falls vorhanden)
     const meta = document.head.querySelector('meta[name="csrf-token"]');
-    if (!meta) {
-        console.error("❌ CSRF meta tag not found!");
-    } else {
-        const token = meta.getAttribute("content");
-        console.log("✅ CSRF token set!");
-
-        // 2) Set it on your API instance
-        environment.api.defaults.headers.common["X-CSRF-TOKEN"] = token;
-
-        // 3) (Optional) also set it globally if you ever use axios directly
-        axios.defaults.headers.common["X-CSRF-TOKEN"] = token;
+    if (meta) {
+        api.defaults.headers.common["X-CSRF-TOKEN"] = meta.content;
+        axios.defaults.headers.common["X-CSRF-TOKEN"] = meta.content;
     }
 
-    // 4) Now mount Vue components — any api calls from here will carry the header
+    // 3) Erstelle Vue-App und provide die Instanz
+    const app = createApp({}); // wir mounten später die einzelnen Komponenten
+    app.provide("api", api);
+
+    // 4) Komponenten mounten
     document.querySelectorAll("[data-vue-component]").forEach((el) => {
         const raw = el.getAttribute("data-props");
         const props = raw ? JSON.parse(raw) : {};
         const Comp = components[el.dataset.vueComponent];
-        if (Comp) createApp(Comp, props).mount(el);
+        if (Comp) {
+            // für jede Komponente eine eigene App-Instanz, die aber das gleiche provide hat
+            createApp(Comp, props).provide("api", api).mount(el);
+        }
     });
 });
