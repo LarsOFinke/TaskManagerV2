@@ -152,8 +152,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import MessageBox from '@/components/shared/Message-Box.vue';
-import { useApiTopicService } from '@/components/api/services/ApiTopicService';
-import { useApiTaskService } from '@/components/api/services/ApiTaskService';
+import { useApiTopicService } from '@/api/services/ApiTopicService';
+import { useApiTaskService } from '@/api/services/ApiTaskService';
 const { topicList, getAllTopics, addNewTopic, loading, error} = useApiTopicService();
 const { addNewTask } = useApiTaskService();
 const props = defineProps({
