@@ -1,8 +1,6 @@
 <?php
-
 namespace App\Security;
 
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -10,7 +8,6 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 class ApiAccessChecker
 {
     public function __construct(
-        private RequestStack $requestStack,
         private CsrfTokenManagerInterface $csrfTokenManager
     ) {}
 

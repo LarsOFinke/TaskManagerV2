@@ -20,13 +20,10 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ApiTaskController extends AbstractController
 {
     public function __construct(private ApiAccessChecker $accessChecker) {}
+
     #[Route('/get-all', name: 'get_all', methods: ['GET'])]
     public function getAll(TaskRepository $taskRepository): Response
     {
-        // if (!$this->accessChecker->ensureCsrfValid('')) {
-        //     throw new BadRequestHttpException('Access denied!');
-        // }
-
         return $this->render('api_task/index.html.twig', [
             'tasks' => $taskRepository->findAll(),
         ]);
@@ -35,8 +32,8 @@ final class ApiTaskController extends AbstractController
     #[Route('/create', name: 'create', methods: ['POST'])]
     public function create(Request $request, EntityManagerInterface $em, EnumService $enumServ): JsonResponse|Response
     {
+        // Security-checks
         $csrfToken = $request?->headers->get('X-CSRF-TOKEN');
-
         try {
             $this->accessChecker->ensureCsrfValid('task_api', $csrfToken);
         } catch (BadRequestHttpException $e) {
@@ -46,18 +43,13 @@ final class ApiTaskController extends AbstractController
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        $data = json_decode($request->getContent(), true);
-
-
-
         $task = new Task();
         $form = $this->createForm(TaskType::class, $task, [
             'csrf_protection' => false,
             'allow_extra_fields' => true,
         ]);
+        $data = json_decode($request->getContent(), true);
         $form->submit($data);
-
-        // 3) Validate
         if (! $form->isSubmitted() || ! $form->isValid()) {
             $errors = [];
             foreach ($form->getErrors(true) as $err) {
@@ -75,7 +67,7 @@ final class ApiTaskController extends AbstractController
             );
         }
 
-        // 4) Persist and return
+        // Fill default task-data, persist and return
         $task->setUserRef($this->getUser());
         $task->setIsCompleted(false);
         $task->setMode($enumServ->enumFromString('user', TaskMode::class));
@@ -101,12 +93,21 @@ final class ApiTaskController extends AbstractController
     #[Route('/edit/{id}', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Task $task, EntityManagerInterface $entityManager): Response
     {
+        // Security-checks
+        $csrfToken = $request?->headers->get('X-CSRF-TOKEN');
+        try {
+            $this->accessChecker->ensureCsrfValid('task_api', $csrfToken);
+        } catch (BadRequestHttpException $e) {
+            return $this->json([
+                'success' => false,
+                'errors'  => $e->getMessage()
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         $form = $this->createForm(TaskType::class, $task);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
             return $this->redirectToRoute('api_todo_get_all', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -119,9 +120,15 @@ final class ApiTaskController extends AbstractController
     #[Route('/delete/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Task $task, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $task->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($task);
-            $entityManager->flush();
+        // Security-checks
+        $csrfToken = $request?->headers->get('X-CSRF-TOKEN');
+        try {
+            $this->accessChecker->ensureCsrfValid('task_api', $csrfToken);
+        } catch (BadRequestHttpException $e) {
+            return $this->json([
+                'success' => false,
+                'errors'  => $e->getMessage()
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         return $this->redirectToRoute('api_todo_get_all', [], Response::HTTP_SEE_OTHER);

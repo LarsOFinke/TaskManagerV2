@@ -5,15 +5,20 @@ namespace App\Controller\Api;
 use App\Entity\Todo;
 use App\Form\TodoType;
 use App\Repository\TodoRepository;
+use App\Security\ApiAccessChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/api/todo', name: 'api_todo_')]
 final class ApiTodoController extends AbstractController
 {
+    public function __construct(private ApiAccessChecker $accessChecker) {}
+
     #[Route('/get-all', name: 'get_all', methods: ['GET'])]
     public function getAll(TodoRepository $todoRepository): Response
     {
@@ -25,6 +30,17 @@ final class ApiTodoController extends AbstractController
     #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
     public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
+        // Security-checks
+        $csrfToken = $request?->headers->get('X-CSRF-TOKEN');
+        try {
+            $this->accessChecker->ensureCsrfValid('task_api', $csrfToken);
+        } catch (BadRequestHttpException $e) {
+            return $this->json([
+                'success' => false,
+                'errors'  => $e->getMessage()
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         $todo = new Todo();
         $form = $this->createForm(TodoType::class, $todo);
         $form->handleRequest($request);
@@ -53,12 +69,22 @@ final class ApiTodoController extends AbstractController
     #[Route('/edit/{id}', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Todo $todo, EntityManagerInterface $entityManager): Response
     {
+        // Security-checks
+        $csrfToken = $request?->headers->get('X-CSRF-TOKEN');
+        try {
+            $this->accessChecker->ensureCsrfValid('task_api', $csrfToken);
+        } catch (BadRequestHttpException $e) {
+            return $this->json([
+                'success' => false,
+                'errors'  => $e->getMessage()
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         $form = $this->createForm(TodoType::class, $todo);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
             return $this->redirectToRoute('api_todo_get_all', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -71,7 +97,18 @@ final class ApiTodoController extends AbstractController
     #[Route('/delete/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Todo $todo, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$todo->getId(), $request->getPayload()->getString('_token'))) {
+        // Security-checks
+        $csrfToken = $request?->headers->get('X-CSRF-TOKEN');
+        try {
+            $this->accessChecker->ensureCsrfValid('task_api', $csrfToken);
+        } catch (BadRequestHttpException $e) {
+            return $this->json([
+                'success' => false,
+                'errors'  => $e->getMessage()
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        if ($this->isCsrfTokenValid('delete' . $todo->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($todo);
             $entityManager->flush();
         }
