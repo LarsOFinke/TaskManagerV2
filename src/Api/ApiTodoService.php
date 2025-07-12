@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/api/todo', name: 'api_todo_')]
-final class ApiTodoController extends AbstractController
+final class ApiTodoService extends AbstractController
 {
     public function __construct(private ApiAccessChecker $accessChecker) {}
 

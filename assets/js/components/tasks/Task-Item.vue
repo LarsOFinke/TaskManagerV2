@@ -94,7 +94,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import MessageBox from '@/components/shared/Message-Box.vue';
-import { useApiTodoService } from '@/api/services/ApiTodoService';
+import { useApiTodoService } from '@/api/ApiTodoService';
 const { loading, error, closeTodo, openTodo } = useApiTodoService();
 const props = defineProps({
     task: Object

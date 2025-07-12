@@ -149,8 +149,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import MessageBox from '@/components/shared/Message-Box.vue';
-import { useApiTopicService } from '@/api/services/ApiTopicService';
-import { useApiTaskService } from '@/api/services/ApiTaskService';
+import { useApiTopicService } from '@/api/ApiTopicService';
+import { useApiTaskService } from '@/api/ApiTaskService';
 const { topicList, getAllTopics, addNewTopic, loading, error } = useApiTopicService();
 const { addNewTask } = useApiTaskService();
 const props = defineProps({
@@ -204,7 +204,7 @@ const addTopic = async () => {
 
 const addToDo = () => {
     id.value++
-    todoList.value.push({ id, text: newTodo.value })
+    todoList.value.push({ id: id.value, text: newTodo.value })
     newTodo.value = ''
 }
 

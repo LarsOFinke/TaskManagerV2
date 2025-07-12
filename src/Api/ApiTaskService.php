@@ -3,7 +3,6 @@
 namespace App\Api;
 
 use Error;
-use App\Repository\TaskRepository;
 use App\Security\ApiAccessChecker;
 use App\Service\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,17 +12,9 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/api/task', name: 'api_task_')]
-final class ApiTaskController extends AbstractController
+final class ApiTaskService extends AbstractController
 {
     public function __construct(private ApiAccessChecker $accessChecker, private TaskService $taskService) {}
-
-    #[Route('/get-all', name: 'get_all', methods: ['GET'])]
-    public function getAll(TaskRepository $taskRepository): JsonResponse
-    {
-        return $this->render('api_task/index.html.twig', [
-            'tasks' => $taskRepository->findAll(),
-        ]);
-    }
 
     #[Route('/create', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse

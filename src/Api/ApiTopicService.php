@@ -8,12 +8,11 @@ use App\Security\ApiAccessChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/api/topic', name: 'api_topic_')]
-final class ApiTopicController extends AbstractController
+final class ApiTopicService extends AbstractController
 {
     public function __construct(private ApiAccessChecker $accessChecker) {}
 
