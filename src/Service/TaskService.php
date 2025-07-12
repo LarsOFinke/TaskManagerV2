@@ -7,8 +7,7 @@ use Doctrine\Common\Collections\Collection;
 
 class TaskService
 {
-
-    public function __construct(private TodoService $todoService) {}
+    public function __construct(private TopicService $topicService, private TodoService $todoService) {}
 
     public function mapTasks(Collection $tasks): array
     {
@@ -16,7 +15,7 @@ class TaskService
             ->map(fn(Task $t): array => [
                 'id'            => $t->getId(),
                 'isCompleted'   => $t->isCompleted(),
-                'topic'         => $t->getTopicIDRef()?->getName(),
+                'topic'         => $this->topicService->mapTopic($t->getTopicIDRef()),
                 'title'         => $t->getTitle(),
                 'description'   => $t->getDescription(),
                 'todoList'      => $this->todoService->mapTodos($t->getTodos())

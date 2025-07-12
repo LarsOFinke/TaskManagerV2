@@ -8,7 +8,7 @@
         <div class="flex items-center w-full mb-2 mt-4">
             <!-- Topic -->
             <div class="absolute text-sm font-semibold text-gray-100 mb-2 rounded-lg shadow-md p-1 top-0 left-0">
-                <h4>{{ props.task.topic }}</h4>
+                <h4>{{ props.task.topic.name }}</h4>
             </div>
             <!-- Title -->
             <h3 class="w-full text-lg font-bold text-gray-100 mb-2">{{ props.task.title }}</h3>
@@ -92,7 +92,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, computed } from 'vue'
 import MessageBox from '@/components/shared/Message-Box.vue';
 import { useApiTodoService } from '@/api/services/ApiTodoService';
 const { loading, error, closeTodo, openTodo } = useApiTodoService();
