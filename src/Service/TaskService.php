@@ -5,6 +5,8 @@ namespace App\Service;
 use Error;
 use App\Entity\User;
 use App\Entity\Task;
+use App\Enum\TaskCategory;
+use App\Enum\TaskInterval;
 use App\Enum\TaskMode;
 use App\Repository\TopicRepository;
 use Doctrine\Common\Collections\Collection;
@@ -24,6 +26,8 @@ class TaskService
             $task->setUserRef($user);
             $task->setTopicIDRef($this->topicRepo->find($data['topic']));
             $task->setMode($this->enumServ->enumFromString('user', TaskMode::class));
+            $task->setCategory($this->enumServ->enumFromString($data['category'], TaskCategory::class));
+            $task->setInterval($this->enumServ->enumFromString($data['interval'], TaskInterval::class));
             $task->setTitle($data['title']);
             $task->setDescription($data['description']);
             $task->setIsCompleted(false);
@@ -42,6 +46,8 @@ class TaskService
                 'id'            => $t->getId(),
                 'isCompleted'   => $t->isCompleted(),
                 'topic'         => $this->topicService->mapTopic($t->getTopicIDRef()),
+                'category'      => $t->getCategory()->value,
+                'interval'      => $t->getInterval()->value,
                 'title'         => $t->getTitle(),
                 'description'   => $t->getDescription(),
             ])

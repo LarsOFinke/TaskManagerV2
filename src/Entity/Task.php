@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Enum\TaskCategory;
+use App\Enum\TaskInterval;
 use App\Enum\TaskMode;
 use App\Repository\TaskRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -41,6 +43,12 @@ class Task
 
     #[ORM\Column(enumType: TaskMode::class)]
     private ?TaskMode $mode = null;
+
+    #[ORM\Column(enumType: TaskCategory::class)]
+    private ?TaskCategory $category = null;
+
+    #[ORM\Column(enumType: TaskInterval::class)]
+    private ?TaskInterval $interval = null;
 
     public function __construct()
     {
@@ -150,6 +158,30 @@ class Task
     public function setMode(TaskMode $mode): static
     {
         $this->mode = $mode;
+
+        return $this;
+    }
+
+    public function getCategory(): ?TaskCategory
+    {
+        return $this->category;
+    }
+
+    public function setCategory(TaskCategory $category): static
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    public function getInterval(): ?TaskInterval
+    {
+        return $this->interval;
+    }
+
+    public function setInterval(TaskInterval $interval): static
+    {
+        $this->interval = $interval;
 
         return $this;
     }

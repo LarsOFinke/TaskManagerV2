@@ -213,6 +213,7 @@ const submitNewTask = async () => {
         title: title.value,
         topic: topic.value,
         category: category.value,
+        interval: interval.value,
         priority: priority.value,
         deadlineDate: deadlineDate.value || null,
         deadlineTime: deadlineTime.value || null,

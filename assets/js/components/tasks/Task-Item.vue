@@ -25,7 +25,7 @@
 
         <!-- Task-Info -->
         <div class="flex text-xs mb-4">
-            <div v-if="task.category !== 'default'" class="w-full text-gray-100">
+            <div v-if="task.category === 'timed' || task.category === 'recurring'" class="w-full text-gray-100">
                 <label class="font-semibold">Deadline:</label>
                 <br>
                 <label class="mb-2">
