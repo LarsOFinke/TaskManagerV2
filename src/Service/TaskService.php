@@ -8,11 +8,11 @@ use App\Entity\Task;
 use App\Enum\TaskCategory;
 use App\Enum\TaskInterval;
 use App\Enum\TaskMode;
+use App\Enum\TaskPriority;
 use App\Repository\TopicRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TaskService
 {
@@ -26,8 +26,18 @@ class TaskService
             $task->setUserRef($user);
             $task->setTopicIDRef($this->topicRepo->find($data['topic']));
             $task->setMode($this->enumServ->enumFromString('user', TaskMode::class));
+            $task->setPriority($this->enumServ->enumFromString($data['priority'], TaskPriority::class));
             $task->setCategory($this->enumServ->enumFromString($data['category'], TaskCategory::class));
             $task->setInterval($this->enumServ->enumFromString($data['interval'], TaskInterval::class));
+            if (! empty($data['deadlineDate'])) {
+                $task->setDeadlineDate(new \DateTime($data['deadlineDate']));
+            }
+            if (! empty($data['deadlineTime'])) {
+                $task->setDeadlineTime($data['deadlineTime']);
+            }
+            if (! empty($data['startDate'])) {
+                $task->setStartDate(new \DateTime($data['startDate']));
+            }
             $task->setTitle($data['title']);
             $task->setDescription($data['description']);
             $task->setIsCompleted(false);
@@ -48,6 +58,9 @@ class TaskService
                 'topic'         => $this->topicService->mapTopic($t->getTopicIDRef()),
                 'category'      => $t->getCategory()->value,
                 'interval'      => $t->getInterval()->value,
+                'startDate'     => $t->getStartDate(),
+                'deadlineDate'     => $t->getDeadlineDate(),
+                'deadlineTime'     => $t->getDeadlineTime(),
                 'title'         => $t->getTitle(),
                 'description'   => $t->getDescription(),
             ])

@@ -210,15 +210,14 @@ const addToDo = () => {
 
 const submitNewTask = async () => {
     const newTask = {
-        title: title.value,
         topic: topic.value,
+        priority: priority.value,
         category: category.value,
         interval: interval.value,
-        priority: priority.value,
+        startDate: startDate.value || null,
         deadlineDate: deadlineDate.value || null,
         deadlineTime: deadlineTime.value || null,
-        startDate: startDate.value || null,
-        remainingTime: 'XXd:XXh:XXmin left',
+        title: title.value,
         description: description.value,
         todoList: todoList.value,
     }
