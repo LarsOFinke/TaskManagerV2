@@ -9,6 +9,7 @@ use App\Enum\TaskCategory;
 use App\Enum\TaskInterval;
 use App\Enum\TaskMode;
 use App\Enum\TaskPriority;
+use App\Repository\TaskRepository;
 use App\Repository\TopicRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class TaskService
 {
-    public function __construct(private EntityManagerInterface $em, private EnumService $enumServ, private TopicService $topicService, private TodoService $todoService, private TopicRepository $topicRepo) {}
+    public function __construct(private EntityManagerInterface $em, private EnumService $enumServ, private TopicService $topicService, private TodoService $todoService, private TopicRepository $topicRepo, private TaskRepository $taskRepository) {}
 
     public function createNewTask(Request $request, User $user): void
     {
@@ -65,5 +66,15 @@ class TaskService
                 'description'   => $t->getDescription(),
             ])
             ->toArray();
+    }
+
+    public function deleteTask(int $taskId): void
+    {
+        try {
+            $this->em->remove($this->taskRepository->find($taskId));
+            $this->em->flush();
+        } catch (Error $e) {
+            throw new Error('Couldnt delete task: ' . $e);
+        }
     }
 }

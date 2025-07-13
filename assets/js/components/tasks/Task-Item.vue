@@ -95,15 +95,18 @@
 import { ref, onMounted, computed } from 'vue'
 import MessageBox from '@/components/shared/Message-Box.vue';
 import { useApiTodoService } from '@/api/ApiTodoService';
+import { useApiTaskService } from '../../api/ApiTaskService';
 const { loading, error, todos, getTodos, closeTodo, openTodo } = useApiTodoService();
+const { deleteTask, closeTask } = useApiTaskService();
 const props = defineProps({
     task: Object
 })
 
+const taskId = props.task.id;
 const todoList = ref([]);
 const msg = ref('')
 const errorPhrase = ref('')
-const emit = defineEmits(['hideItemEdit', 'updateTaskList', 'closeItem'])
+const emit = defineEmits(['updateTaskList',])
 const showTodos = ref(true)
 const doneTodos = computed(() => todoList.value.filter(t => t.isCompleted).length)
 const totalTodos = computed(() => todoList.value.length)
@@ -149,13 +152,13 @@ const toggleTodoStatus = async (todo) => {
 }
 
 const deleteItem = async () => {
-    await deleteTask(task.id)
-    updateList()
+    await deleteTask(taskId)
+    emit('updateTaskList');
 }
 
 const closeItem = async () => {
-    await closeTask(task.id)
-    updateList()
+    await closeTask(taskId)
+    emit('updateTaskList');
 }
 
 </script>

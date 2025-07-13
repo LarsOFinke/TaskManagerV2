@@ -19,7 +19,7 @@
         <div class="overflow-x-auto max-h-95 sm:overflow-y-auto sm:flex">
             <ul class="mb-8 sm:flex">
                 <task-item v-for="task in taskList" :key="task.id" :task="task" :edit-url="task.editUrl"
-                    :can-edit="task.canEdit"></task-item>
+                    :can-edit="task.canEdit" @updateTaskList="updateTaskList"></task-item>
             </ul>
         </div>
 
@@ -48,5 +48,9 @@ const viewItemEdit = ref(false);
 
 const goToForm = () => {
     window.location.href = props.taskFormUrl;
+}
+
+const updateTaskList = () => { 
+    window.location.reload();
 }
 </script>

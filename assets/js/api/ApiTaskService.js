@@ -55,7 +55,7 @@ export function useApiTaskService() {
         loading.value = true;
         error.value = null;
         try {
-            await api.post("tasks/delete", { taskId });
+            await api.post("api/task/delete", { taskId });
             return true;
         } catch (err) {
             error.value =
