@@ -16,8 +16,11 @@ export function useApiTodoService() {
         loading.value = true;
         error.value = null;
         try {
-            await api.post("todos/close", { todoId });
-            return true;
+            const response = await api.post("api/todo/close", { todoId });
+            if (response.success) {
+                return true;
+            }
+            return false;
         } catch (err) {
             error.value = err.response?.data?.message || "Closing todo failed.";
             return false;
@@ -30,8 +33,11 @@ export function useApiTodoService() {
         loading.value = true;
         error.value = null;
         try {
-            await api.post("todos/open", { todoId });
-            return true;
+            const response = await api.post("api/todo/open", { todoId });
+            if (response.success) {
+                return true;
+            }
+            return false;
         } catch (err) {
             error.value = err.response?.data?.message || "Opening todo failed.";
             return false;

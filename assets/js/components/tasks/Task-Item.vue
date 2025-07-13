@@ -100,14 +100,14 @@ const props = defineProps({
     task: Object
 })
 
-const todoList = ref(Array.isArray(props.task.todoList) ? [...props.task.todoList] : [])
+const todoList = computed(() => state.todoList)
 const msg = ref('')
 const errorPhrase = ref('')
 const emit = defineEmits(['hideItemEdit', 'updateTaskList', 'closeItem'])
 const showTodos = ref(true)
-const doneTodos = computed(() => { todoList.value.filter(t => !t.isCompleted).length })
-const totalTodos = computed(() => { todoList.value.length })
-const itemCloseable = computed(() => { !(doneTodos.value < totalTodos.value) })
+const doneTodos = computed(() => todoList.value.filter(t => !t.isCompleted).length )
+const totalTodos = computed(() => todoList.value.length )
+const itemCloseable = computed(() => !(doneTodos.value < totalTodos.value) )
 
 const toggleShowTodos = (toggleOn) => {
     if (toggleOn) {
@@ -124,11 +124,11 @@ const goEdit = () => {
 const toggleTodoStatus = async (todo) => {
     if (!todo.isCompleted) {
         if (await closeTodo(todo.id)) {
-            todo.isCompleted = false
+            todo.isCompleted = true
         }
     } else {
         if (await openTodo(todo.id)) {
-            todo.isCompleted = true
+            todo.isCompleted = false
         }
     }
 }
