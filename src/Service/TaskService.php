@@ -19,6 +19,15 @@ class TaskService
 {
     public function __construct(private EntityManagerInterface $em, private EnumService $enumServ, private TopicService $topicService, private TodoService $todoService, private TopicRepository $topicRepo, private TaskRepository $taskRepository) {}
 
+    public function getUncompletedTasks(Collection $tasks): array
+    {
+        $taskArray = $this->mapTasks($tasks);
+        return array_filter(
+            $taskArray,
+            fn($t): bool => !$t['isCompleted']
+        );;
+    }
+
     public function createNewTask(Request $request, User $user): void
     {
         try {

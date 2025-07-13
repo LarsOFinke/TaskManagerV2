@@ -15,12 +15,7 @@ final class TaskController extends AbstractController
     {
         /** @var \App\Entity\User|null $user */
         $user   = $this->getUser();
-        $taskArray = $taskService->mapTasks($user->getTasks());
-        $taskList = array_filter(
-            $taskArray,
-            /** @var \App\Entity\Task|null $t */
-            fn($t): bool => !$t['isCompleted']
-        );
+        $taskList = $taskService->getUncompletedTasks($user->getTasks());
 
         return $this->render('task/task_list.html.twig', [
             'header'   => 'My Task List',
