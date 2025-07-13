@@ -15,14 +15,16 @@ final class TaskController extends AbstractController
     {
         /** @var \App\Entity\User|null $user */
         $user   = $this->getUser();
-        $taskList = json_encode(
-            $taskService
-                ->mapTasks($user->getTasks())
+        $taskArray = $taskService->mapTasks($user->getTasks());
+        $taskList = array_filter(
+            $taskArray,
+            /** @var \App\Entity\Task|null $t */
+            fn($t): bool => !$t['isCompleted']
         );
 
         return $this->render('task/task_list.html.twig', [
             'header'   => 'My Task List',
-            'taskList' => $taskList,
+            'taskList' => json_encode($taskList),
         ]);
     }
 
