@@ -32,7 +32,7 @@
                     {{ props.task.deadlineDate }}
                     {{ props.task.deadlineTime ? '\| ' + props.task.deadlineTime + 'h' : null }}
                 </label>
-                <label v-if="props.task.remainingTime !== null" class="float-right">
+                <label v-if="!props.task.remainingTime === null && !props.task.remainingTime === ''" class="float-right">
                     ({{ props.task.remainingTime }})</label>
             </div>
         </div>

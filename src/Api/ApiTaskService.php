@@ -70,4 +70,33 @@ final class ApiTaskService extends AbstractController
 
         return new JsonResponse(['success' => true], JsonResponse::HTTP_ACCEPTED);
     }
+
+    #[Route('/close', name: 'close', methods: ['POST'])]
+    public function close(Request $request): JsonResponse
+    {
+        // Security-checks
+        $csrfToken = $request?->headers->get('X-CSRF-TOKEN');
+        try {
+            $this->accessChecker->ensureCsrfValid('task_api', $csrfToken);
+        } catch (BadRequestHttpException $e) {
+            return $this->json([
+                'success' => false,
+                'errors'  => $e->getMessage()
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $taskId = $data['taskId'];
+
+        try {
+            $this->taskService->closeTask($taskId);
+        } catch (Error $e) {
+            return $this->json([
+                'success' => false,
+                'errors'  => $e->getMessage()
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return new JsonResponse(['success' => true], JsonResponse::HTTP_ACCEPTED);
+    }
 }

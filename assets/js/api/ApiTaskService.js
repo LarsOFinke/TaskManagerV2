@@ -55,8 +55,11 @@ export function useApiTaskService() {
         loading.value = true;
         error.value = null;
         try {
-            await api.post("api/task/delete", { taskId });
-            return true;
+            const response = await api.post("api/task/delete", { taskId });
+            if (response.data.success) {
+                return true;
+            }
+            return false;
         } catch (err) {
             error.value =
                 err.response?.data?.message || "Deleting task failed.";
@@ -70,8 +73,11 @@ export function useApiTaskService() {
         loading.value = true;
         error.value = null;
         try {
-            await api.post("tasks/close", { taskId });
-            return true;
+            const response = await api.post("api/task/close", { taskId });
+            if (response.data.success) {
+                return true;
+            }
+            return false;
         } catch (err) {
             error.value = err.response?.data?.message || "Closing task failed.";
             return false;

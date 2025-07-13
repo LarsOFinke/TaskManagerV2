@@ -77,4 +77,15 @@ class TaskService
             throw new Error('Couldnt delete task: ' . $e);
         }
     }
+
+    public function closeTask(int $taskId): void
+    {
+        try {
+            $task = $this->taskRepository->find($taskId);
+            $task->setIsCompleted(true);
+            $this->em->flush();
+        } catch (Error $e) {
+            throw new Error('Couldnt close task: ' . $e);
+        }
+    }
 }
