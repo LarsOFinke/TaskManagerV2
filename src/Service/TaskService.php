@@ -44,7 +44,6 @@ class TaskService
                 'topic'         => $this->topicService->mapTopic($t->getTopicIDRef()),
                 'title'         => $t->getTitle(),
                 'description'   => $t->getDescription(),
-                'todoList'      => $this->todoService->mapTodos($t->getTodos())
             ])
             ->toArray();
     }

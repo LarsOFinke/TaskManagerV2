@@ -92,22 +92,35 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import MessageBox from '@/components/shared/Message-Box.vue';
 import { useApiTodoService } from '@/api/ApiTodoService';
-const { loading, error, closeTodo, openTodo } = useApiTodoService();
+const { loading, error, todos, getTodos, closeTodo, openTodo } = useApiTodoService();
 const props = defineProps({
     task: Object
 })
 
-const todoList = computed(() => state.todoList)
+const todoList = ref([]);
 const msg = ref('')
 const errorPhrase = ref('')
 const emit = defineEmits(['hideItemEdit', 'updateTaskList', 'closeItem'])
 const showTodos = ref(true)
-const doneTodos = computed(() => todoList.value.filter(t => !t.isCompleted).length )
-const totalTodos = computed(() => todoList.value.length )
-const itemCloseable = computed(() => !(doneTodos.value < totalTodos.value) )
+const doneTodos = computed(() => todoList.value.filter(t => t.isCompleted).length)
+const totalTodos = computed(() => todoList.value.length)
+const itemCloseable = computed(() => !(doneTodos.value < totalTodos.value))
+
+onMounted(async () => {
+    await fetchTodos();
+})
+
+const fetchTodos = async () => {
+    if (await getTodos(props.task.id)) {
+        todoList.value = todos.value;
+    } else {
+        errorPhrase.value = "Something went wrong!";
+        msg.value = "Failed to fetch todos!";
+    }
+}
 
 const toggleShowTodos = (toggleOn) => {
     if (toggleOn) {
@@ -125,10 +138,12 @@ const toggleTodoStatus = async (todo) => {
     if (!todo.isCompleted) {
         if (await closeTodo(todo.id)) {
             todo.isCompleted = true
+            await fetchTodos();
         }
     } else {
         if (await openTodo(todo.id)) {
             todo.isCompleted = false
+            await fetchTodos();
         }
     }
 }

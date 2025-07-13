@@ -5,13 +5,20 @@ namespace App\Service;
 use Error;
 use App\Entity\Task;
 use App\Entity\Todo;
+use App\Repository\TaskRepository;
 use App\Repository\TodoRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 
 class TodoService
 {
-    public function __construct(private EntityManagerInterface $em, private TodoRepository $todoRepo) {}
+    public function __construct(private EntityManagerInterface $em, private TaskRepository $taskRepo, private TodoRepository $todoRepo) {}
+
+    public function getTodosForTask($taskId)
+    {
+        $todos = $this->taskRepo->find($taskId)->getTodos();
+        return $this->mapTodos($todos);
+    }
 
     public function createTodoList(array $todos, Task $task): void
     {

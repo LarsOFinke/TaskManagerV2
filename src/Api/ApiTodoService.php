@@ -16,6 +16,24 @@ final class ApiTodoService extends AbstractController
 {
     public function __construct(private ApiAccessChecker $accessChecker, private TodoService $todoService) {}
 
+    #[Route('/get/{taskId}', name: 'get', methods: ['GET'])]
+    public function getTodos(int $taskId): JsonResponse
+    {
+        try {
+            $todoList = $this->todoService->getTodosForTask($taskId);
+        } catch (Error $e) {
+            return $this->json([
+                'success' => false,
+                'error' => $e
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return $this->json([
+            'success' => true,
+            'todoList' => $todoList
+        ], JsonResponse::HTTP_OK);
+    }
+
     #[Route('/close', name: 'close', methods: ['POST'])]
     public function closeTodo(Request $request): JsonResponse
     {
